@@ -4,6 +4,8 @@ RegisterCommand('itemsMenu', function()
     TriggerServerEvent('creativeItemMenu:requestOpen')
 end, false)
 
+RegisterKeyMapping("itemsMenu", "Opens the Admin Item Menu", "keyboard", "i")
+
 RegisterNetEvent('creativeItemMenu:open', function(itemsList)
     SendNUIMessage({
         action = 'openMenu',
