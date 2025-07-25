@@ -12,17 +12,20 @@ local function getOxItems()
     return formatted
 end
 
-
-RegisterCommand('itemsMenu', function(source)
+RegisterNetEvent('creativeItemMenu:requestOpen', function()
     local src = source
+
     if not IsPlayerAceAllowed(src, 'command.itemsMenu') then
-        TriggerClientEvent('ox_lib:notify', src, { type = 'error', description = 'You are not an admin.' })
+        TriggerClientEvent('ox_lib:notify', src, {
+            type = 'error',
+            description = 'You are not an admin.'
+        })
         return
     end
 
     local itemsList = getOxItems()
     TriggerClientEvent('creativeItemMenu:open', src, itemsList)
-end, false)
+end)
 
 -- Receive request from client to add item
 RegisterNetEvent('creativeItemMenu:addItem', function(itemName, amount)

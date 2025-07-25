@@ -1,56 +1,84 @@
 body {
+    margin: 0;
+    padding: 0;
     font-family: Arial, sans-serif;
     background: transparent;
-    color: #eee;
-    margin: 0;
-    padding: 20px;
     display: none;
 }
 
 #menu {
-    max-width: 600px;
-    margin: 0 auto;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 400px;
+    height: 100vh;
     background: #222;
+    color: #eee;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #000;
-    display: none;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.7);
+    transition: right 0.4s ease-in-out;
+    overflow-y: auto;
+    z-index: 9999;
+}
+
+#menu.active {
+    right: 0;
 }
 
 input,
-select,
 button {
-    padding: 8px;
-    margin: 5px 0;
     width: 100%;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-    max-height: 300px;
-    overflow-y: auto;
-    border: 1px solid #444;
-    margin-bottom: 10px;
-}
-
-li {
     padding: 10px;
-    border-bottom: 1px solid #444;
-    cursor: pointer;
-    background: #2a2a2a;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
 }
 
-li:hover,
-li.selected {
-    background: #555;
+#search {
+    margin-bottom: 15px;
+}
+
+#itemGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 10px;
+}
+
+.itemCard {
+    background: #333;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.itemCard img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    margin-bottom: 4px;
+    filter: drop-shadow(1px 1px 2px black);
+}
+
+.itemCard:hover {
+    background: #444;
+}
+
+.itemCard span {
+    display: block;
+    font-size: 0.85rem;
+    color: #ccc;
 }
 
 #controls {
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 #closeBtn {

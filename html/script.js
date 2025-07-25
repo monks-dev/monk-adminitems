@@ -1,73 +1,62 @@
 let items = [];
 let filteredItems = [];
-let selectedItem = null;
 
 window.addEventListener('message', function (event) {
     if (event.data.action === 'openMenu') {
         items = event.data.items || [];
         filteredItems = items;
-        selectedItem = null;
-        document.getElementById('quantity').value = 1;
-        document.getElementById('addItemBtn').disabled = true;
-        renderList();
-        document.getElementById('menu').style.display = 'block';
         document.body.style.display = 'block';
+        document.getElementById('menu').classList.add('active');
+        renderItems();
         document.getElementById('search').focus();
     } else if (event.data.action === 'closeMenu') {
-        document.getElementById('menu').style.display = 'none';
-        document.body.style.display = 'none';
+        document.getElementById('menu').classList.remove('active');
+        setTimeout(() => {
+            document.body.style.display = 'none';
+        }, 400); // match slide-out time
     }
 });
 
-function renderList() {
-    const list = document.getElementById('itemList');
-    list.innerHTML = '';
+function renderItems() {
+    const grid = document.getElementById('itemGrid');
+    grid.innerHTML = '';
 
     filteredItems.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item.label + ' (' + item.name + ')';
-        li.dataset.name = item.name;
+        const div = document.createElement('div');
+        div.className = 'itemCard';
 
-        li.onclick = () => {
-            selectedItem = item;
-            updateSelection();
+        // Use ox_inventory's image path
+        const imgPath = `nui://ox_inventory/web/images/${item.name}.png`;
+
+        div.innerHTML = `
+            <img src="${imgPath}" alt="${item.name}" onerror="this.src='fallback.png';" />
+            <strong>${item.label}</strong>
+            <span>${item.name}</span>
+        `;
+
+        div.onclick = () => {
+            const amount = parseInt(document.getElementById('quantity').value, 10) || 1;
+            fetch(`https://${GetParentResourceName()}/addItem`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    itemName: item.name,
+                    amount: amount
+                })
+            });
         };
 
-        list.appendChild(li);
+        grid.appendChild(div);
     });
 }
 
-function updateSelection() {
-    const lis = document.querySelectorAll('#itemList li');
-    lis.forEach(li => {
-        li.classList.toggle('selected', li.dataset.name === selectedItem.name);
-    });
-    document.getElementById('addItemBtn').disabled = !selectedItem;
-}
 
 document.getElementById('search').addEventListener('input', (e) => {
     const val = e.target.value.toLowerCase();
     filteredItems = items.filter(i =>
         i.name.toLowerCase().includes(val) || i.label.toLowerCase().includes(val)
     );
-    selectedItem = null;
-    updateSelection();
-    renderList();
-});
-
-document.getElementById('addItemBtn').addEventListener('click', () => {
-    if (!selectedItem) return;
-    const quantity = parseInt(document.getElementById('quantity').value, 10);
-    fetch(`https://${GetParentResourceName()}/addItem`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            itemName: selectedItem.name,
-            amount: quantity > 0 ? quantity : 1
-        })
-    }).then(() => {
-        fetch(`https://${GetParentResourceName()}/closeMenu`, { method: 'POST' });
-    });
+    renderItems();
 });
 
 document.getElementById('closeBtn').addEventListener('click', () => {

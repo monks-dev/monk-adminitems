@@ -1,5 +1,9 @@
 local isMenuOpen = false
 
+RegisterCommand('itemsMenu', function()
+    TriggerServerEvent('creativeItemMenu:requestOpen')
+end, false)
+
 RegisterNetEvent('creativeItemMenu:open', function(itemsList)
     SendNUIMessage({
         action = 'openMenu',
